@@ -264,6 +264,7 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">spatial</span><span class="p">,</span> <span class="n">cluster</span>
+<span class="kn">from</span> <span class="nn">scipy.spatial.distance</span> <span class="k">import</span> <span class="n">directed_hausdorff</span>
 <span class="kn">import</span> <span class="nn">matplotlib</span>
 
 <span class="kn">import</span> <span class="nn">warnings</span>
@@ -366,6 +367,14 @@
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">sqnorm</span><span class="p">(</span><span class="n">p</span> <span class="o">-</span> <span class="n">Q</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">P</span><span class="p">])</span></div>
 
 
+<span class="k">def</span> <span class="nf">reshaper</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">axis</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Flatten path when appropriate to facilitate calculations</span>
+<span class="sd">    requiring two dimensional input.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">axis</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">path</span>
+
 <div class="viewcode-block" id="get_coord_axes"><a class="viewcode-back" href="../../../documentation_pages/analysis/psa.html#MDAnalysis.analysis.psa.get_coord_axes">[docs]</a><span class="k">def</span> <span class="nf">get_coord_axes</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Return the number of atoms and the axes corresponding to atoms</span>
 <span class="sd">    and coordinates for a given path.</span>
@@ -410,6 +419,10 @@
 <div class="viewcode-block" id="hausdorff"><a class="viewcode-back" href="../../../documentation_pages/analysis/psa.html#MDAnalysis.analysis.psa.hausdorff">[docs]</a><span class="k">def</span> <span class="nf">hausdorff</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">Q</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Calculate the symmetric Hausdorff distance between two paths.</span>
 
+<span class="sd">    The metric used is RMSD, as opposed to the more conventional L2</span>
+<span class="sd">    (Euclidean) norm, because this is convenient for i.e., comparing</span>
+<span class="sd">    protein configurations.</span>
+
 <span class="sd">    *P* (*Q*) is a :class:`numpy.ndarray` of :math:`N_p` (:math:`N_q`) time</span>
 <span class="sd">    steps, :math:`N` atoms, and :math:`3N` coordinates (e.g.,</span>
 <span class="sd">    :attr:`MDAnalysis.core.groups.AtomGroup.positions`). *P* (*Q*) has</span>
@@ -451,36 +464,29 @@
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-<span class="sd">    The Hausdorff distance is calculated in a brute force manner from the</span>
-<span class="sd">    distance matrix without further optimizations, essentially following</span>
-<span class="sd">    [Huttenlocher1993]_.</span>
-
 <span class="sd">    :func:`scipy.spatial.distance.directed_hausdorff` is an optimized</span>
-<span class="sd">    implementation of the early break algorithm of [Taha2015]_; note that one</span>
-<span class="sd">    still has to calculate the *symmetric* Hausdorff distance as</span>
-<span class="sd">    `max(directed_hausdorff(P, Q)[0], directed_hausdorff(Q, P)[0])`.</span>
-
+<span class="sd">    implementation of the early break algorithm of [Taha2015]_; the</span>
+<span class="sd">    latter code is used here to calculate the symmetric Hausdorff</span>
+<span class="sd">    distance with an RMSD metric</span>
 
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
-<span class="sd">    .. [Huttenlocher1993] D. P. Huttenlocher, G. A. Klanderman, and</span>
-<span class="sd">        W. J. Rucklidge. Comparing images using the Hausdorff distance. IEEE</span>
-<span class="sd">        Transactions on Pattern Analysis and Machine Intelligence,</span>
-<span class="sd">        15(9):850–863, 1993.</span>
 <span class="sd">    .. [Taha2015] A. A. Taha and A. Hanbury. An efficient algorithm for</span>
 <span class="sd">       calculating the exact Hausdorff distance. IEEE Transactions On Pattern</span>
 <span class="sd">       Analysis And Machine Intelligence, 37:2153-63, 2015.</span>
 
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    scipy.spatial.distance.directed_hausdorff</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">N</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="n">get_coord_axes</span><span class="p">(</span><span class="n">P</span><span class="p">)</span>
-    <span class="n">d</span> <span class="o">=</span> <span class="n">get_msd_matrix</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">amin</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)),</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">amin</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)))</span> <span class="o">/</span> <span class="n">N</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span></div>
+    <span class="n">N_p</span><span class="p">,</span> <span class="n">axis_p</span> <span class="o">=</span> <span class="n">get_coord_axes</span><span class="p">(</span><span class="n">P</span><span class="p">)</span>
+    <span class="n">N_q</span><span class="p">,</span> <span class="n">axis_q</span> <span class="o">=</span> <span class="n">get_coord_axes</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">N_p</span> <span class="o">!=</span> <span class="n">N_q</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;P and Q must have matching sizes&quot;</span><span class="p">)</span>
+
+    <span class="n">P</span> <span class="o">=</span> <span class="n">reshaper</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">axis_p</span><span class="p">)</span>
+    <span class="n">Q</span> <span class="o">=</span> <span class="n">reshaper</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">axis_q</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">directed_hausdorff</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">Q</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
+               <span class="n">directed_hausdorff</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">P</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">N_p</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="hausdorff_wavg"><a class="viewcode-back" href="../../../documentation_pages/analysis/psa.html#MDAnalysis.analysis.psa.hausdorff_wavg">[docs]</a><span class="k">def</span> <span class="nf">hausdorff_wavg</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">Q</span><span class="p">):</span>

@@ -93,7 +93,7 @@ map-dendrogram plots from hierarchical clustering.</p>
 <table class="docutils citation" frame="void" id="seyler2015" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label">[Seyler2015]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id4">2</a>, <a class="fn-backref" href="#id5">3</a>, <a class="fn-backref" href="#id6">4</a>)</em> Seyler SL, Kumar A, Thorpe MF, Beckstein O (2015)
+<tr><td class="label">[Seyler2015]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id3">2</a>, <a class="fn-backref" href="#id4">3</a>, <a class="fn-backref" href="#id5">4</a>)</em> Seyler SL, Kumar A, Thorpe MF, Beckstein O (2015)
 Path Similarity Analysis: A Method for Quantifying
 Macromolecular Pathways. PLoS Comput Biol 11(10): e1004568.
 doi: <a class="reference external" href="http://dx.doi.org/10.1371/journal.pcbi.1004568">10.1371/journal.pcbi.1004568</a></td></tr>
@@ -220,6 +220,9 @@ each atom.</li>
 <dt id="MDAnalysis.analysis.psa.hausdorff">
 <code class="descclassname">MDAnalysis.analysis.psa.</code><code class="descname">hausdorff</code><span class="sig-paren">(</span><em>P</em>, <em>Q</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/MDAnalysis/analysis/psa.html#hausdorff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MDAnalysis.analysis.psa.hausdorff" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the symmetric Hausdorff distance between two paths.</p>
+<p>The metric used is RMSD, as opposed to the more conventional L2
+(Euclidean) norm, because this is convenient for i.e., comparing
+protein configurations.</p>
 <p><em>P</em> (<em>Q</em>) is a <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.14)"><code class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></code></a> of <span class="math">\(N_p\)</span> (<span class="math">\(N_q\)</span>) time
 steps, <span class="math">\(N\)</span> atoms, and <span class="math">\(3N\)</span> coordinates (e.g.,
 <a class="reference internal" href="../core/groups.html#MDAnalysis.core.groups.AtomGroup.positions" title="MDAnalysis.core.groups.AtomGroup.positions"><code class="xref py py-attr docutils literal"><span class="pre">MDAnalysis.core.groups.AtomGroup.positions</span></code></a>). <em>P</em> (<em>Q</em>) has
@@ -262,35 +265,19 @@ either shape <span class="math">\(N_p \times N \times 3\)</span> (<span class="m
 </pre></div>
 </div>
 <p class="rubric">Notes</p>
-<p>The Hausdorff distance is calculated in a brute force manner from the
-distance matrix without further optimizations, essentially following
-<a class="reference internal" href="#huttenlocher1993" id="id2">[Huttenlocher1993]</a>.</p>
 <p><a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.directed_hausdorff.html#scipy.spatial.distance.directed_hausdorff" title="(in SciPy v1.0.0)"><code class="xref py py-func docutils literal"><span class="pre">scipy.spatial.distance.directed_hausdorff()</span></code></a> is an optimized
-implementation of the early break algorithm of <a class="reference internal" href="#taha2015" id="id3">[Taha2015]</a>; note that one
-still has to calculate the <em>symmetric</em> Hausdorff distance as
-<cite>max(directed_hausdorff(P, Q)[0], directed_hausdorff(Q, P)[0])</cite>.</p>
+implementation of the early break algorithm of <a class="reference internal" href="#taha2015" id="id2">[Taha2015]</a>; the
+latter code is used here to calculate the symmetric Hausdorff
+distance with an RMSD metric</p>
 <p class="rubric">References</p>
-<table class="docutils citation" frame="void" id="huttenlocher1993" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id2">[Huttenlocher1993]</a></td><td>D. P. Huttenlocher, G. A. Klanderman, and
-W. J. Rucklidge. Comparing images using the Hausdorff distance. IEEE
-Transactions on Pattern Analysis and Machine Intelligence,
-15(9):850–863, 1993.</td></tr>
-</tbody>
-</table>
 <table class="docutils citation" frame="void" id="taha2015" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id3">[Taha2015]</a></td><td>A. A. Taha and A. Hanbury. An efficient algorithm for
+<tr><td class="label"><a class="fn-backref" href="#id2">[Taha2015]</a></td><td>A. A. Taha and A. Hanbury. An efficient algorithm for
 calculating the exact Hausdorff distance. IEEE Transactions On Pattern
 Analysis And Machine Intelligence, 37:2153-63, 2015.</td></tr>
 </tbody>
 </table>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.directed_hausdorff.html#scipy.spatial.distance.directed_hausdorff" title="(in SciPy v1.0.0)"><code class="xref py py-func docutils literal"><span class="pre">scipy.spatial.distance.directed_hausdorff()</span></code></a></p>
-</div>
 </dd></dl>
 
 <dl class="function">
@@ -343,7 +330,7 @@ measure that gives equal weight to <em>P</em> and <em>Q</em>.</p>
 </div>
 <p class="rubric">Notes</p>
 <p>The weighted average Hausdorff distance is not a true metric (it does not
-obey the triangle inequality); see <a class="reference internal" href="#seyler2015" id="id4">[Seyler2015]</a> for further details.</p>
+obey the triangle inequality); see <a class="reference internal" href="#seyler2015" id="id3">[Seyler2015]</a> for further details.</p>
 </dd></dl>
 
 <dl class="function">
@@ -395,7 +382,7 @@ average Hausdorff gives equal weight to both paths.</p>
 </div>
 <p class="rubric">Notes</p>
 <p>The average Hausdorff distance is not a true metric (it does not obey the
-triangle inequality); see <a class="reference internal" href="#seyler2015" id="id5">[Seyler2015]</a> for further details.</p>
+triangle inequality); see <a class="reference internal" href="#seyler2015" id="id4">[Seyler2015]</a> for further details.</p>
 </dd></dl>
 
 <dl class="function">
@@ -432,7 +419,7 @@ distances for <cite>P</cite> and <cite>Q</cite>, respectively</p>
 <ul class="simple">
 <li>Hausdorff neighbors are those points on the two paths that are separated by
 the Hausdorff distance. They are the farthest nearest neighbors and are
-maximally different in the sense of the Hausdorff distance <a class="reference internal" href="#seyler2015" id="id6">[Seyler2015]</a>.</li>
+maximally different in the sense of the Hausdorff distance <a class="reference internal" href="#seyler2015" id="id5">[Seyler2015]</a>.</li>
 <li><a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.directed_hausdorff.html#scipy.spatial.distance.directed_hausdorff" title="(in SciPy v1.0.0)"><code class="xref py py-func docutils literal"><span class="pre">scipy.spatial.distance.directed_hausdorff()</span></code></a> can also provide the
 hausdorff neighbors.</li>
 </ul>
@@ -486,21 +473,21 @@ trajectory.</p>
 it is sensitive to the direction of the path.</p>
 <p class="rubric">Notes</p>
 <p>The discrete Fréchet metric is an approximation to the continuous Fréchet
-metric <a class="reference internal" href="#frechet1906" id="id7">[Frechet1906]</a> <a class="reference internal" href="#alt1995" id="id8">[Alt1995]</a>. The calculation of the continuous
+metric <a class="reference internal" href="#frechet1906" id="id6">[Frechet1906]</a> <a class="reference internal" href="#alt1995" id="id7">[Alt1995]</a>. The calculation of the continuous
 Fréchet distance is implemented with the dynamic programming algorithm of
-<a class="reference internal" href="#eitermannila1994" id="id9">[EiterMannila1994]</a> <a class="reference internal" href="#eitermannila1997" id="id10">[EiterMannila1997]</a>.</p>
+<a class="reference internal" href="#eitermannila1994" id="id8">[EiterMannila1994]</a> <a class="reference internal" href="#eitermannila1997" id="id9">[EiterMannila1997]</a>.</p>
 <p class="rubric">References</p>
 <table class="docutils citation" frame="void" id="frechet1906" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id7">[Frechet1906]</a></td><td>M. Fréchet. Sur quelques points du calcul
+<tr><td class="label"><a class="fn-backref" href="#id6">[Frechet1906]</a></td><td>M. Fréchet. Sur quelques points du calcul
 fonctionnel. Rend. Circ. Mat. Palermo, 22(1):1–72, Dec. 1906.</td></tr>
 </tbody>
 </table>
 <table class="docutils citation" frame="void" id="alt1995" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id8">[Alt1995]</a></td><td>H. Alt and M. Godau. Computing the Fréchet distance between
+<tr><td class="label"><a class="fn-backref" href="#id7">[Alt1995]</a></td><td>H. Alt and M. Godau. Computing the Fréchet distance between
 two polygonal curves. Int J Comput Geometry &amp; Applications,
 5(01n02):75–91, 1995. doi: <a class="reference external" href="http://doi.org/10.1142/S0218195995000064">10.1142/S0218195995000064</a></td></tr>
 </tbody>
@@ -508,7 +495,7 @@ two polygonal curves. Int J Comput Geometry &amp; Applications,
 <table class="docutils citation" frame="void" id="eitermannila1994" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id9">[EiterMannila1994]</a></td><td>T. Eiter and H. Mannila. Computing discrete Fréchet
+<tr><td class="label"><a class="fn-backref" href="#id8">[EiterMannila1994]</a></td><td>T. Eiter and H. Mannila. Computing discrete Fréchet
 distance. Technical Report CD-TR 94/64, Christian Doppler Laboratory for
 Expert Systems, Technische Universität Wien, Wien, 1994.</td></tr>
 </tbody>
@@ -516,7 +503,7 @@ Expert Systems, Technische Universität Wien, Wien, 1994.</td></tr>
 <table class="docutils citation" frame="void" id="eitermannila1997" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id10">[EiterMannila1997]</a></td><td>T. Eiter and H. Mannila. Distance measures for point
+<tr><td class="label"><a class="fn-backref" href="#id9">[EiterMannila1997]</a></td><td>T. Eiter and H. Mannila. Distance measures for point
 sets and their computation. Acta Informatica, 34:109–133, 1997. doi: <a class="reference external" href="http://doi.org/10.1007/s002360050075">10.1007/s002360050075</a>.</td></tr>
 </tbody>
 </table>

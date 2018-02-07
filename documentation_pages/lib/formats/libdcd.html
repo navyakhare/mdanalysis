@@ -272,7 +272,8 @@ unitcell data structure.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>remarks</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – remarks of DCD file. Shouldn’t be more then 240 characters (ASCII)</li>
+<li><strong>remarks</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – remarks of DCD file. Writes up to 239 characters (ASCII). The
+character 240 will be the null terminator</li>
 <li><strong>natoms</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – number of atoms to write</li>
 <li><strong>istart</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – starting frame number</li>
 <li><strong>nsavc</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – number of frames between saves</li>

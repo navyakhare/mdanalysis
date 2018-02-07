@@ -737,7 +737,7 @@ be considered to have a length of a single time step <cite>dt</cite> and a
 
 <dl class="class">
 <dt id="MDAnalysis.coordinates.DCD.DCDWriter">
-<em class="property">class </em><code class="descclassname">MDAnalysis.coordinates.DCD.</code><code class="descname">DCDWriter</code><span class="sig-paren">(</span><em>filename</em>, <em>n_atoms</em>, <em>convert_units=True</em>, <em>step=1</em>, <em>dt=1</em>, <em>remarks=''</em>, <em>nsavc=1</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/MDAnalysis/coordinates/DCD.html#DCDWriter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MDAnalysis.coordinates.DCD.DCDWriter" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">MDAnalysis.coordinates.DCD.</code><code class="descname">DCDWriter</code><span class="sig-paren">(</span><em>filename</em>, <em>n_atoms</em>, <em>convert_units=True</em>, <em>step=1</em>, <em>dt=1</em>, <em>remarks=''</em>, <em>nsavc=1</em>, <em>istart=0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/MDAnalysis/coordinates/DCD.html#DCDWriter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MDAnalysis.coordinates.DCD.DCDWriter" title="Permalink to this definition">¶</a></dt>
 <dd><p>DCD Writer class</p>
 <p>The writer follows recent NAMD/VMD convention for the unitcell (box lengths
 in Å and angle-cosines, <code class="docutils literal"><span class="pre">[A,</span> <span class="pre">cos(gamma),</span> <span class="pre">B,</span> <span class="pre">cos(beta),</span> <span class="pre">cos(alpha),</span> <span class="pre">C]</span></code>)
@@ -759,6 +759,7 @@ correspond to the interval between two frames as nsavc (i.e., every
 how many MD steps is a frame saved to the DCD). By default, this
 number is just set to one and this should be sufficient for almost
 all cases but if required, nsavc can be changed.</li>
+<li><strong>istart</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em> (</em><em>optional</em><em>)</em>) – starting frame number. CHARMM defaults to 1.</li>
 <li><strong>**kwargs</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) – General writer arguments</li>
 </ul>
 </td>
